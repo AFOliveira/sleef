@@ -85,6 +85,10 @@
 #define __riscv_vcreate_v_u64m1_u64m2(x, y) __riscv_vset(__riscv_vlmul_ext_v_u64m1_u64m2(x), 1, y)
 #define __riscv_vcreate_v_u64m2_u64m4(x, y) __riscv_vset(__riscv_vlmul_ext_v_u64m2_u64m4(x), 1, y)
 
+// GCC 15 reports intrinsics v0.12 (__riscv_v_intrinsic 12000) but already has these two:
+// redefining them makes them external in C++ (the DFT's unroll_*.cpp), one per object file
+// ("multiple definition" when linking libsleefdft users).
+#if !(defined(__GNUC__) && !defined(__clang__) && __GNUC__ >= 15)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wuninitialized"
 #pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
@@ -97,6 +101,7 @@ static INLINE vfloat64m2x4_t __riscv_vcreate_v_f64m2x4(vfloat64m2_t x, vfloat64m
     return __riscv_vset(__riscv_vset(__riscv_vset(__riscv_vset(unused, 0, x), 1, y), 2, z), 3, w);
 }
 #pragma GCC diagnostic pop
+#endif
 #endif
 
 #ifdef NDEBUG
